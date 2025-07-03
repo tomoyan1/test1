@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>スケジュール案</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>本日のスケジュール案</h2>
+        <form method="post" action="/complete_task">
+        <table>
+            <tr>
+                <th>時間帯</th>
+                <th>タスク</th>
+                <th>目標番号</th>
+                <th>ステータス</th>
+                <th>操作</th>
+            </tr>
+            {% for s in schedule %}
+            <tr>
+                <td>{{ s.time }}</td>
+                <td>{{ s.task }}</td>
+                <td>{{ s.goal_num }}</td>
+                <td>{{ s.status }}</td>
+                <td>
+                    {% if s.status != '✅' %}
+                    <button name="idx" value="{{ loop.index0 }}">完了</button>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        </form>
+        <form method="get" action="/reflection">
+            <button type="submit">振り返りへ</button>
+        </form>
+    </div>
+</body>
+</html>

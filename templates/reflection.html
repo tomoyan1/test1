@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>本日の振り返り</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>本日の振り返り</h2>
+        <ul>
+            {% for s in schedule %}
+            <li>
+                {{ s.task }}：
+                {% if s.status == '✅' %}✅ 完了{% else %}❌ 未完了{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <form method="post">
+            <label>未完了タスクの原因や気づき：</label><br>
+            <textarea name="reason" rows="3" cols="40"></textarea><br>
+            <label>明日の改善アイデア：</label><br>
+            <ul>
+                <li>タスクを小さく分けてみる</li>
+                <li>優先度の高いものから着手する</li>
+                <li>集中できる時間帯を見つける</li>
+            </ul>
+            <button type="submit">振り返りを送信</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,9 @@
+body { font-family: 'Yu Gothic', 'Meiryo', sans-serif; background: #f6f8fa; }
+.container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 10px; box-shadow: 0 2px 8px #ddd; }
+h1, h2 { color: #2d5b8c; }
+table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+th, td { border: 1px solid #bbb; padding: 0.5em; text-align: center; }
+button { background: #2d5b8c; color: #fff; border: none; padding: 0.5em 1em; border-radius: 5px; cursor: pointer; }
+button:hover { background: #19456b; }
+input[type="text"] { width: 90%; padding: 0.5em; margin-bottom: 0.3em; border: 1px solid #ccc; border-radius: 5px; }
+textarea { width: 90%; border-radius: 5px; border: 1px solid #ccc; }
