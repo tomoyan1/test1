@@ -69,5 +69,9 @@ def reflection():
         return render_template('thanks.html')
     return render_template('reflection.html', schedule=schedule)
 
+@app.route('/pomodoro')
+def pomodoro():
+    return render_template('pomodoro.html')
+
 if __name__ == '__main__':
     app.run(debug=True)
