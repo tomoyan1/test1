@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>媒体更新ツール</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            color: #495057;
+            margin-bottom: 30px;
+        }
+        .input-section {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .input-section h2 {
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            color: #495057;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+        }
+        .input-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px 20px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .input-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        .input-group input[type="text"] {
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .input-group input[type="text"]:focus {
+            outline: none;
+            border-color: #80bdff;
+            box-shadow: 0 0 0 0.2rem rgba(0,123,255,.25);
+        }
+        .category-section {
+            background-color: white;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .toggle-button {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            background-color: #6c757d;
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1.2em;
+            font-weight: bold;
+        }
+        .toggle-button:hover {
+            background-color: #5a6268;
+        }
+        .collapsible-content {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+            display: none;
+        }
+        .checklist {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .checklist-item {
+            padding: 15px 0;
+            border-bottom: 1px solid #f1f3f5;
+        }
+        .checklist-item:last-child {
+            border-bottom: none;
+        }
+        .item-header {
+            display: flex;
+            align-items: center;
+        }
+        .item-header input[type="checkbox"] {
+            margin-right: 15px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .item-header label {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            flex-grow: 1;
+            font-size: 1.1em;
+        }
+        .color-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .template-container {
+            margin-top: 10px;
+            padding-left: 33px;
+        }
+        .template-label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #495057;
+        }
+        .template-container textarea {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 8px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background-color: #f8f9fa;
+            font-family: inherit;
+            min-height: 80px;
+            resize: vertical;
+            white-space: pre-wrap;
+        }
+        .controls {
+            margin-top: 8px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .copy-template-btn, .link-btn {
+            padding: 6px 12px;
+            font-size: 0.9em;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .copy-template-btn {
+            background-color: #007bff;
+        }
+        .copy-template-btn:hover {
+            background-color: #0056b3;
+        }
+        .link-btn {
+            background-color: #ff9800;
+        }
+        .link-btn:hover {
+            background-color: #f57c00;
+        }
+        .copy-success {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 5px;
+            z-index: 1000;
+            display: none;
+        }
+        .dot-pink { background-color: #e83e8c; }
+        .dot-yellow { background-color: #ffc107; }
+        .dot-lightblue { background-color: #17a2b8; }
+        .dot-gray { background-color: #6c757d; }
+        .dot-black { background-color: #343a40; }
+        .dot-blue { background-color: #007bff; }
+        .dot-orange { background-color: #fd7e14; }
+    </style>
+</head>
+<body>
+
+    <h1>媒体更新ツール</h1>
+
+    <!-- 基本情報入力セクション -->
+    <div class="input-section">
+        <h2>基本情報入力</h2>
+        <div class="input-grid">
+            <div class="input-group"><label for="input-genji">源氏名</label><input type="text" id="input-genji" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-copy">コピー</label><input type="text" id="input-copy" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-bunsho">文章（メルマガ用）</label><input type="text" id="input-bunsho" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-date">デビュー日</label><input type="text" id="input-date" placeholder="例: 7/20(土)" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-time">時間</label><input type="text" id="input-time" placeholder="例: 12:00-20:00" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-age">年齢</label><input type="text" id="input-age" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-size">スリーサイズ</label><input type="text" id="input-size" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-hp">公式HP URL</label><input type="text" id="input-hp" oninput="updateAllTemplates()"></div>
+            <div class="input-group"><label for="input-yumeoto">ユメオトURL</label><input type="text" id="input-yumeoto" oninput="updateAllTemplates()"></div>
+        </div>
+    </div>
+
+    <!-- カテゴリ1: セレブ -->
+    <div class="category-section">
+        <button class="toggle-button" onclick="toggleCategory('celeb-content')">セレブ</button>
+        <div id="celeb-content" class="collapsible-content">
+            <ul class="checklist">
+                <!-- Nトピ -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-ntopi"><label for="celeb-ntopi"><span class="color-dot dot-pink"></span>Nトピ</label></div><div class="template-container"><textarea id="template-celeb-ntopi" readonly></textarea><div class="controls"><button class="link-btn" onclick="openLink('https://shop.ds.ccspro.cc/shop_news/article/add/news/input')">サイトへ移動</button><button class="copy-template-btn" onclick="copyTemplate('template-celeb-ntopi')">コピー</button></div></div></li>
+                <!-- 速報 -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-sokuho"><label for="celeb-sokuho"><span class="color-dot dot-yellow"></span>速報</label></div><div class="template-container"><div class="controls"><button class="link-btn" onclick="openLink('https://shop.ds.ccspro.cc/setting/shop/announce_banner/edit/input/44')">サイトへ移動</button></div></div></li>
+                <!-- 一斉送信 -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-issei"><label for="celeb-issei"><span class="color-dot dot-lightblue"></span>一斉送信</label></div><div class="template-container"><textarea id="template-celeb-issei" readonly></textarea><div class="controls"><button class="link-btn" onclick="openLink('https://shop.ds.ccspro.cc/chat/site_member/shop_notice/list')">サイトへ移動</button><button class="copy-template-btn" onclick="copyTemplate('template-celeb-issei')">コピー</button></div></div></li>
+                <!-- 前日メルマガ -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-zenjitsu"><label for="celeb-zenjitsu"><span class="color-dot dot-gray"></span>前日メルマガ</label></div></li>
+                
+                <!-- ===== メルマガ (修正箇所) ===== -->
+                <li class="checklist-item">
+                    <div class="item-header"><input type="checkbox" id="celeb-mailmag"><label for="celeb-mailmag"><span class="color-dot dot-black"></span>メルマガ</label></div>
+                    <div class="template-container">
+                        <textarea id="template-celeb-mailmag" readonly></textarea>
+                        <div class="controls">
+                            <button class="link-btn" onclick="openLink('https://www.bull-mail.com/magazine/magazine.php?key=celeb-ks')">サイトへ移動</button>
+                            <button class="copy-template-btn" onclick="copyTemplate('template-celeb-mailmag')">コピー</button>
+                        </div>
+                    </div>
+                </li>
+                <!-- ===== ここまで ===== -->
+
+                <!-- コンテンツ一括 -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-contents"><label for="celeb-contents"><span class="color-dot dot-blue"></span>コンテンツ一括</label></div><div class="template-container"><textarea id="template-celeb-contents" readonly></textarea><div class="controls"><button class="copy-template-btn" onclick="copyTemplate('template-celeb-contents')">コピー</button></div></div></li>
+                <!-- 各サイト項目 -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-sites"><label for="celeb-sites"><span class="color-dot dot-blue"></span>各サイト項目</label></div><div class="template-container"><label class="template-label">テキスト1 (サービス内容)</label><textarea id="template-celeb-sites1" readonly>ディープキス可
+生フェラ可
+全身リップ可
+素股可
+玉舐め可
+指入れ可
+パイズリ可
+69可
+口内発射可
+アナル舐め不可
+即尺不可
+潜望鏡可
+顔射不可</textarea><div class="controls"><button class="copy-template-btn" onclick="copyTemplate('template-celeb-sites1')">コピー</button></div></div><div class="template-container"><label class="template-label">テキスト2 (オプション)</label><textarea id="template-celeb-sites2" readonly>ローター可
+パンスト可
+AF不可</textarea><div class="controls"><button class="copy-template-btn" onclick="copyTemplate('template-celeb-sites2')">コピー</button></div></div></li>
+                
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-qa"><label for="celeb-qa"><span class="color-dot dot-blue"></span>Q＆A</label></div></li>
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-address"><label for="celeb-address"><span class="color-dot dot-blue"></span>アドレス取得</label></div></li>
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-bk"><label for="celeb-bk"><span class="color-dot dot-blue"></span>BK並び替え</label></div></li>
+                <!-- 報告 -->
+                <li class="checklist-item"><div class="item-header"><input type="checkbox" id="celeb-report"><label for="celeb-report"><span class="color-dot dot-orange"></span>報告</label></div><div class="template-container"><textarea id="template-celeb-report" readonly>【オフィシャル】
+Nトピ：済
+メルマガ：済
+一斉チャット：済
+ーーーー
+【媒体】
+BK Q＆A：済
+各サイト項目：済
+コンテンツ一括：済
+写メ日記登録：済
+Bk並び替え：済</textarea><div class="controls"><button class="copy-template-btn" onclick="copyTemplate('template-celeb-report')">コピー</button></div></div></li>
+            </ul>
+        </div>
+    </div>
+
+    <div id="copySuccess" class="copy-success">コピーしました！</div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            updateAllTemplates();
+        });
+
+        function updateAllTemplates() {
+            // ... (内容は変更なし)
+            const genji = document.getElementById('input-genji').value || '（源氏名）';
+            const copyText = document.getElementById('input-copy').value;
+            const bunsho = document.getElementById('input-bunsho').value || '（ここにスタッフコメント）';
+            const date = document.getElementById('input-date').value || '（日付）';
+            const time = document.getElementById('input-time').value || '（時間）';
+            const age = document.getElementById('input-age').value || '（年齢）';
+            const size = document.getElementById('input-size').value || '（スリーサイズ）';
+            const hpUrl = document.getElementById('input-hp').value || '（公式HP URL）';
+            const yumeotoUrl = document.getElementById('input-yumeoto').value || '（ユメオトURL）';
+
+            const copyPart = copyText ? `${copyText}` : '';
+
+            // Nトピ
+            const ntopiTextarea = document.getElementById('template-celeb-ntopi');
+            if (ntopiTextarea) {
+                ntopiTextarea.value = `【${date}デビュー！！】${copyPart}【${genji}】さん＠錦糸町人妻セレブリティ`;
+            }
+
+            // 一斉送信
+            const isseiTextarea = document.getElementById('template-celeb-issei');
+            if (isseiTextarea) {
+                const isseiCopyPart = copyText ? `《${copyText}》\n` : '';
+                isseiTextarea.value = 
+`┏―━―━―━―━―┓ 
+　本日デビュー情報☆彡
+┗―━―━―━―━―┛
+${isseiCopyPart}${genji}さん　${age}歳
+▽出勤時間▽
+${date}「${time}」
+▽キャストページはコチラ▽
+${yumeotoUrl}
+■店舗ページ
+https://yumeoto.net/shop/44`;
+            }
+            
+            // コンテンツ一括
+            const contentsTextarea = document.getElementById('template-celeb-contents');
+            if (contentsTextarea) {
+                contentsTextarea.value = `【${date}デビュー！！】${copyPart}【${genji}】さん`;
+            }
+
+            // メルマガ
+            const mailmagTextarea = document.getElementById('template-celeb-mailmag');
+            if (mailmagTextarea) {
+                const mailmagCopyPart = copyText ? `【${copyText}】\n` : '';
+                
+                const header = `■╋■━━━━━━━━━━━━━━━\n╋■本日デビュー！新人ポイント還元情報！\n■┛━━━━━━━━━━━━━━━━\n☆::★::☆:*:★:☆\n`;
+                const body = 
+`${mailmagCopyPart}【${genji}】さん　【${age}】歳
+【${size}】
+【${hpUrl}】
+【${yumeotoUrl}】
+出勤時間　【${time}】
+╋staff comment╋
+${bunsho}
+■■■■■■■■■■■■■■■■■■■■■■
+ユ┃メ┃オ┃ト┃会┃員┃様┃限┃定┃
+━┛━┛━┛━┛━┛━┛━┛━┛━┛
+◆新人入店ポイント還元◆
+┏特┓90分コース
+┃別┃　　↓
+┃還┃　な・ん・と！
+┗元┛5000ポイント還元
+●90分コース→【5,000ポイント還元】
+●120分コース→【7,000ポイント還元】
+※150分以上のコースも7,000ポイント還元になります。
+■注意事項
+※本指名のお客様は対象外となります
+※他の割引やクーポン券との併用は出来ません。
+※メルマガ配信女性限定の還元になります。
+■■■■■■■■■■■■■■■■■■■■■■
+■╋■━━━━━━━━━━━━━
+╋■┛系列店★情報
+■┛━━━━━━━━━━━━━━
+【上野人妻セレブリティ】
+http://www.celeb-un.com/top/?magazine
+【上野ミセスアロマ】
+http://www.unmrs-aroma.com/top/?magazine
+【錦糸町夢見る乙女】
+http://www.yumeoto-ks.com/top/?magazine
+【錦糸町ミセスアロマ】
+http://www.ksmrs-aroma.com/top/?magazine
+★☆★☆★☆★☆★☆★☆★☆★
+※お電話での受付開始時間は只今からとなっております。
+本メールマガジンは配信を希望された方に配信しております。
+お心当たりの無い方、配信停止をご希望の方は、
+お手数ですが下記サイトより解除設定を行ってください。
+◆錦糸町人妻セレブリティ◆
+http://www.celeb-ks.com/top/
+TEL：03-6303-9022
+■■■■■　新予約システムのご案内　■■■■■
+日頃ご愛顧いただき誠にありがとうございます。
+この度、業界大手となる「夢見る乙女グループ」と「グレイスグループ」の共同開発で、会員様限定の新しいWeb予約システム「ユメオト」を開発いたしました。
+今までのWeb予約では、ご利用の度に、お名前、電話番号、メールアドレス、その他ご利用情報の入力に、お手数をおかけしておりました。
+新たな予約システム「ユメオト」では初回登録をいただいた後は、毎回の入力は一切不要！
+極限までシンプルな予約方法を追求し、ホーム画面から最短4タップで予約完了となる感動的にスムーズな予約体験をご提供いたします！
+さらに！「ユメオト」から予約をいただいた会員様限定でクレジットカード手数料が無料となります！！
+これは、10％～20％の「クレジットカード決済にかかるサービス手数料」が一般的となっている風俗業界では革新的な試み。
+私たちは、業界の健全化と、真のユーザーファーストを追求します。
+【革新的な特徴】
+・一度ご登録いただくと次回から最短4タップで予約が完了します。
+・お客様のお好み条件からご案内可能なキャストを瞬時にご提案致します。
+・キャストの空き状況を確認して瞬時にご予約ができます。
+・マイページよりお客様のご利用履歴を確認することができます。
+・クレジットカード手数料が無料となります。
+さらに詳しい内容をお知りになりたい方は、こちらのご紹介ページをご覧ください。
+https://www.yumeoto.net/sp/lp/`;
+                
+                mailmagTextarea.value = header + body;
+            }
+        }
+
+        function toggleCategory(contentId) {
+            const content = document.getElementById(contentId);
+            content.style.display = content.style.display === "block" ? "none" : "block";
+        }
+
+        function openLink(url) {
+            window.open(url, '_blank', 'noopener,noreferrer');
+        }
+
+        function copyTemplate(textareaId) {
+            const textarea = document.getElementById(textareaId);
+            navigator.clipboard.writeText(textarea.value).then(() => {
+                showCopySuccess();
+            }).catch(err => {
+                console.error('コピーに失敗しました', err);
+            });
+        }
+
+        function showCopySuccess() {
+            const notice = document.getElementById('copySuccess');
+            notice.style.display = 'block';
+            setTimeout(() => {
+                notice.style.display = 'none';
+            }, 2000);
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>SMART化＆優先度付け</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h2>SMART化＆優先度付け</h2>
+        <form method="post" action="/schedule">
+            <ol>
+                {% for g in smart_goals %}
+                <li>
+                    <strong>目標{{ loop.index }}：</strong> {{ g.smart }}<br>
+                    <span>優先度：{{ g.priority }}／見積：{{ g.estimate }}分</span>
+                </li>
+                {% endfor %}
+            </ol>
+            <button type="submit">スケジュール作成へ</button>
+        </form>
+    </div>
+</body>
+</html>

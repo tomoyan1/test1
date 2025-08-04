@@ -1,0 +1,53 @@
+body { font-family: 'Yu Gothic', 'Meiryo', sans-serif; background: #f6f8fa; }
+.container { max-width: 600px; margin: 40px auto; background: #fff; padding: 2em; border-radius: 10px; box-shadow: 0 2px 8px #ddd; }
+h1, h2 { color: #2d5b8c; }
+table { width: 100%; border-collapse: collapse; margin-top: 1em; }
+th, td { border: 1px solid #bbb; padding: 0.5em; text-align: center; }
+
+/* ポモドーロタイマーのスタイル */
+.pomodoro-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    text-align: center;
+}
+
+.timer-container {
+    background-color: #4CAF50;
+    padding: 2rem;
+    border-radius: 15px;
+    margin: 2rem 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+#timer-display {
+    font-size: 4rem;
+    font-weight: bold;
+    color: white;
+    margin: 1rem 0;
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+button {
+    background-color: white;
+    color: #4CAF50;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+    color: white;
+}
+
+input[type="text"] { width: 90%; padding: 0.5em; margin-bottom: 0.3em; border: 1px solid #ccc; border-radius: 5px; }
+textarea { width: 90%; border-radius: 5px; border: 1px solid #ccc; }
